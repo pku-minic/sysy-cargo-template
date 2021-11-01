@@ -12,7 +12,8 @@ lazy_static! {
 end f_main
 "#);
     map.insert('t', r#"f_main [0]
-  return 0
+  a0 = 0
+  return
 end f_main
 "#);
     map.insert('r', r#"  .text
