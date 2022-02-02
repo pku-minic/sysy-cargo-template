@@ -5,20 +5,21 @@ use std::io::{Result, Write};
 use lazy_static::lazy_static;
 
 lazy_static! {
-  static ref GENERATOR: HashMap<char, &'static str> = {
+  static ref GENERATOR: HashMap<&'static str, &'static str> = {
     let mut map = HashMap::new();
-    map.insert('e', r#"f_main [0]
-  return 0
-end f_main
+    map.insert("-koopa", r#"fun @main(): i32 {
+%entry:
+  ret 0
+}
 "#);
-    map.insert('t', r#"f_main [0]
-  a0 = 0
-  return
-end f_main
+    map.insert("-riscv", r#"  .text
+  .globl main
+main:
+  li a0, 0
+  ret
 "#);
-    map.insert('r', r#"  .text
-  .align 2
-  .global main
+    map.insert("-perf", r#"  .text
+  .globl main
 main:
   li a0, 0
   ret
@@ -30,22 +31,10 @@ main:
 fn main() -> Result<()> {
   let mut args = env::args();
   args.next();
-  match (
-    args.next(),
-    args.next(),
-    args.next(),
-    args.next(),
-    args.next(),
-  ) {
-    (Some(_), Some(m), Some(_), Some(_), Some(f)) if m == "-e" => {
-      write!(File::create(f)?, "{}", GENERATOR[&'e'])
-    }
-    (Some(_), Some(m), Some(_), Some(_), Some(f)) if m == "-t" => {
-      write!(File::create(f)?, "{}", GENERATOR[&'t'])
-    }
-    (Some(_), Some(_), Some(_), Some(f), None) => {
-      write!(File::create(f)?, "{}", GENERATOR[&'r'])
-    }
-    _ => panic!("invalid command line argument"),
-  }
+  let mode = args.next().unwrap();
+  args.next();
+  args.next();
+  let output = args.next().unwrap();
+  let mut file = File::create(output)?;
+  write!(file, "{}", GENERATOR[mode.as_str()])
 }
