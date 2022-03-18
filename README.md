@@ -27,7 +27,7 @@ git clone https://github.com/pku-minic/sysy-cmake-template.git
 进入仓库目录后执行:
 
 ```sh
-cargo run -- -S -e input.c -o output.eeyore
+cargo run -- -koopa input.c -o output.koopa
 ```
 
 Cargo 将自动构建并运行该项目.
